@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toropaal/bloc/onboarding/onboarding_bloc.dart';
@@ -13,7 +14,9 @@ class OnboardingScreen extends StatelessWidget {
         body: BlocBuilder<OnboardingBloc, OnboardingState>(
           builder: (context, state) {
             if (state is OnboardingLoading) {
-              return const Center(child: CircularProgressIndicator.adaptive());
+              return const Center(
+                child: CupertinoActivityIndicator(radius: 16),
+              );
             }
             return PageView(
               children: [
@@ -23,7 +26,11 @@ class OnboardingScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.account_balance_wallet, size: 100),
+                      Image.asset(
+                        'assets/icons/app_icon.png',
+                        width: 100,
+                        height: 100,
+                      ),
                       const SizedBox(height: 20),
                       Text(
                         'Track Your Budget',
@@ -38,7 +45,11 @@ class OnboardingScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.savings, size: 100),
+                      Image.asset(
+                        'assets/icons/app_icon.png',
+                        width: 100,
+                        height: 100,
+                      ),
                       const SizedBox(height: 20),
                       Text(
                         'Set Savings Goals',
@@ -53,7 +64,11 @@ class OnboardingScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.eco, size: 100),
+                      Image.asset(
+                        'assets/icons/app_icon.png',
+                        width: 100,
+                        height: 100,
+                      ),
                       const SizedBox(height: 20),
                       Text(
                         'Eco-Friendly Banking',

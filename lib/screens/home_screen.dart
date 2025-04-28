@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'transaction_history_screen.dart';
 import 'budget_screen.dart';
@@ -8,6 +9,7 @@ import '../models/transaction.dart';
 import '../models/user_balance.dart';
 import '../services/transaction_service.dart';
 import '../services/balance_service.dart';
+import 'add_money_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -408,7 +410,7 @@ class HomeContent extends StatelessWidget {
             elevation: 4,
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: Center(child: CircularProgressIndicator()),
+              child: Center(child: CupertinoActivityIndicator()),
             ),
           );
         } else if (snapshot.hasError) {
@@ -452,7 +454,11 @@ class HomeContent extends StatelessWidget {
                   children: [
                     OutlinedButton.icon(
                       onPressed: () {
-                        // TODO: Implement add money functionality
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => const AddMoneyScreen(),
+                          ),
+                        );
                       },
                       icon: const Icon(Icons.add, color: Colors.white),
                       label: const Text(
@@ -496,7 +502,7 @@ class HomeContent extends StatelessWidget {
       future: transactionService.getTransactionHistory(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CupertinoActivityIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
