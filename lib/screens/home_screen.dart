@@ -322,7 +322,8 @@ class HomeContent extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
-              // TODO: Implement sign up flow
+              // Navigate to the authentication screen for sign-up/login
+              Navigator.pushNamed(context, '/auth');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,

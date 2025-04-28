@@ -1,66 +1,114 @@
-# Toropal - Money Transfer App
+# Toropal - Finch Money Transfer App
 
-Toropal is a Flutter-based mobile application that facilitates fast and secure money transfers using blockchain technology. This project aims to replicate the core functionalities of money transfer services with a focus on security, speed, and user experience.
+Finch (formerly Toropal) is a Flutter-based mobile application designed for fast, secure, and global money transfers, leveraging modern technology for a seamless user experience.
 
 ## Features
 
-- **User Authentication**: Secure sign-up and login functionality
-- **Money Transfer Interface**: User-friendly interface for sending money globally
-- **Transaction History**: Track and view past transactions
-- **Real-time Exchange Rates**: Access current exchange rates for transfers
-- **Blockchain Integration**: Secure transactions using blockchain technology
+*   **User Authentication**: Secure sign-up and login.
+*   **Balance Management**: View current balance and add funds.
+*   **Money Transfer**: Send money globally with competitive rates (integration pending).
+*   **Transaction History**: Track and view past transactions with status updates.
+*   **Budgeting Tools**: Manage personal budgets (details in `BudgetScreen`).
+*   **Savings Goals**: Set and track savings goals (details in `SavingsGoalsScreen`).
+*   **Social Payments**: Features for splitting bills or sending money to contacts (details in `SocialPaymentScreen`).
+*   **Eco-Friendly Features**: Track carbon footprint, explore green investments, and donate to environmental causes (details in `EcoFriendlyScreen`).
+*   **(Planned)** Blockchain Integration: Secure transactions using blockchain technology.
+*   **(Planned)** Real-time Exchange Rates: Access current exchange rates for transfers.
+
+## Architecture Overview
+
+This application primarily uses the **BLoC (Business Logic Component)** pattern for state management, separating UI from business logic.
+
+*   **`lib/bloc`**: Contains BLoC classes for managing the state of different features (Authentication, Balance, Budget, Transactions, etc.).
+*   **`lib/models`**: Defines the data structures (e.g., `Transaction`, `UserBalance`, `Budget`).
+*   **`lib/screens`**: Contains the main UI screens for different parts of the application.
+*   **`lib/services`**: Includes service classes that handle business logic, data fetching (currently mocked/simulated), and interactions with potential backend APIs or blockchain networks (e.g., `TransactionService`, `BalanceService`).
+*   **`lib/main.dart`**: The entry point of the application, setting up initial routing and providers.
 
 ## Getting Started
 
 ### Prerequisites
 
-- Flutter SDK (latest version recommended)
-- Dart SDK
-- An IDE (VS Code, Android Studio, etc.)
-- Git
+*   **Flutter SDK**: Version 3.0.0 or higher recommended. Install from [Flutter official website](https://flutter.dev/docs/get-started/install).
+*   **Dart SDK**: Bundled with Flutter.
+*   **IDE**: Android Studio or VS Code (with Flutter and Dart plugins).
+*   **Platform SDKs**:
+    *   **Android**: Android SDK (install via Android Studio).
+    *   **iOS/macOS**: Xcode (install from Mac App Store).
+*   **Git**: For cloning the repository.
 
-### Installation
+### Installation & Setup
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/toropal.git
-   ```
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/yourusername/toropaal.git # Replace with your repo URL if different
+    cd toropal
+    ```
 
-2. Navigate to the project directory:
-   ```
-   cd toropal
-   ```
+2.  **Install dependencies**:
+    ```bash
+    flutter pub get
+    ```
 
-3. Install dependencies:
-   ```
-   flutter pub get
-   ```
+3.  **Run the app** (select a device or emulator):
+    ```bash
+    flutter run
+    ```
 
-4. Run the app:
-   ```
-   flutter run
-   ```
+## Running Tests
 
-## Development
+Currently, the project includes basic widget tests. To run them:
 
-This project uses CodeGPT with GPT-4.1 for development assistance. To set up CodeGPT in VS Code:
+```bash
+flutter test
+```
 
-1. Install the CodeGPT extension from the VS Code marketplace
-2. Configure the extension with your OpenAI API key
-3. Use CodeGPT to assist with code generation, debugging, and explanations
+*(Note: Comprehensive unit and integration tests are planned for future development)*
+
+## Building for Release
+
+### Android
+
+```bash
+flutter build apk --release
+# or for App Bundle
+flutter build appbundle --release
+```
+*(Ensure you have set up signing keys as per Flutter documentation)*
+
+### iOS
+
+```bash
+flutter build ipa --release
+```
+*(Requires Xcode setup and an Apple Developer account)*
+
+## API Documentation
+
+Details regarding backend APIs or blockchain interactions are currently handled by mock services within the `lib/services/` directory. As real backend services are integrated, API documentation will be provided separately.
 
 ## Project Structure
 
-- `lib/main.dart` - Entry point of the application
-- `lib/screens/` - Contains all screen widgets
-- `lib/widgets/` - Reusable widgets
-- `lib/models/` - Data models
-- `lib/services/` - API and blockchain services
+```
+lib/
+├── bloc/             # BLoC pattern implementations for state management
+│   ├── authentication/
+│   ├── balance/
+│   ├── budget/
+│   ├── onboarding/
+│   ├── social_payment/
+│   ├── splash/
+│   └── transaction/
+├── main.dart         # App entry point
+├── models/           # Data models (Transaction, UserBalance, etc.)
+├── screens/          # UI Screens (HomeScreen, AuthScreen, etc.)
+└── services/         # Business logic, data fetching, API interaction
+```
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please follow standard Git workflow (fork, branch, pull request).
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the `LICENSE` file for details.
