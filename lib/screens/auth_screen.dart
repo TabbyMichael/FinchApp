@@ -256,7 +256,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               onPressed: _switchAuthMode,
                               child: Text(
                                 _isLogin
-                                    ? 'Don\'t have an account? Sign up'
+                                    ? ' Sign up'
                                     : 'Already have an account? Login',
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
