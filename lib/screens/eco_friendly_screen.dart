@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../models/carbon_footprint.dart';
+import '../models/sustainable_investment.dart'; // Import the moved model
+import '../models/eco_donation.dart'; // Import the moved model
 import '../services/eco_friendly_service.dart';
 
 class EcoFriendlyScreen extends StatefulWidget {
@@ -543,17 +545,4 @@ class _EcoFriendlyScreenState extends State<EcoFriendlyScreen>
   }
 }
 
-// This class is used for the donations tab
-class EcoDonation {
-  final String id;
-  final String name;
-  final String category;
-  final String description;
-
-  EcoDonation({
-    required this.id,
-    required this.name,
-    required this.category,
-    required this.description,
-  });
-}
+// EcoDonation class moved to models/eco_donation.dart

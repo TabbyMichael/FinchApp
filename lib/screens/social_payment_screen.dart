@@ -265,10 +265,10 @@ class _SocialPaymentScreenState extends State<SocialPaymentScreen>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Total paid: ${payment.totalPaid} / ${payment.amount} ${payment.currency}',
+                    'Total paid: ${payment.participants.fold(0.0, (sum, p) => sum + p.amountPaid)} / ${payment.amount} ${payment.currency}',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  if (payment.isSettled)
+                  if (payment.participants.every((p) => p.hasPaid))
                     const Chip(
                       label: Text('Fully Settled'),
                       backgroundColor: Colors.green,
