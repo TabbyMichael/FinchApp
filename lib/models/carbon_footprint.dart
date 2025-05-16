@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class CarbonFootprint {
   final String id;
   final String transactionId;
@@ -38,8 +40,36 @@ class CarbonFootprint {
       'details': details,
     };
   }
+
+  // Convert CarbonFootprint from Database Map
+  factory CarbonFootprint.fromDbMap(Map<String, dynamic> map) {
+    return CarbonFootprint(
+      id: map['id'],
+      transactionId: map['transactionId'],
+      carbonAmount: map['carbonAmount'],
+      category: map['category'],
+      date: DateTime.parse(map['date']),
+      // Assuming details is stored as a JSON string
+      details: map['details'] != null ? jsonDecode(map['details']) : null,
+    );
+  }
+
+  // Convert CarbonFootprint to Database Map
+  Map<String, dynamic> toDbMap() {
+    return {
+      'id': id,
+      'transactionId': transactionId,
+      'carbonAmount': carbonAmount,
+      'category': category,
+      'date': date.toIso8601String(),
+      // Assuming details is stored as a JSON string
+      'details': details != null ? jsonEncode(details) : null,
+    };
+  }
 }
 
+/* SustainableInvestment class removed, moved to its own file */
+/*
 class SustainableInvestment {
   final String id;
   final String name;
@@ -96,3 +126,4 @@ class SustainableInvestment {
     };
   }
 }
+*/

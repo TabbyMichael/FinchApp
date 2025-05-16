@@ -1,120 +1,77 @@
+import '../database/database_helper.dart';
 import '../models/social_payment.dart';
 
 class SocialPaymentService {
-  // Simulate fetching social payments
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+  // Fetch social payments from the database
   Future<List<SocialPayment>> getSocialPayments() async {
-    // This would normally be an API call to a backend service
-    await Future.delayed(
-      const Duration(milliseconds: 800),
-    ); // Simulate network delay
-
-    return [
-      SocialPayment(
-        id: 'sp1',
-        amount: 120.0,
-        currency: 'USD',
-        senderId: 'user1',
-        senderName: 'Alex Johnson',
-        participants: [
-          Participant(
-            id: 'user2',
-            name: 'Sarah Williams',
-            email: 'sarah@example.com',
-            amountOwed: 40.0,
-            amountPaid: 40.0,
-            status: 'paid',
-          ),
-          Participant(
-            id: 'user3',
-            name: 'Mike Chen',
-            email: 'mike@example.com',
-            amountOwed: 40.0,
-            amountPaid: 0.0,
-            status: 'pending',
-          ),
-          Participant(
-            id: 'user4',
-            name: 'Jessica Lee',
-            email: 'jessica@example.com',
-            amountOwed: 40.0,
-            amountPaid: 40.0,
-            status: 'paid',
-          ),
-        ],
-        description: 'Dinner at Italian Restaurant',
-        date: DateTime.now().subtract(const Duration(days: 2)),
-        status: 'pending',
-        message: 'Thanks for a great evening!',
-      ),
-      SocialPayment(
-        id: 'sp2',
-        amount: 75.0,
-        currency: 'USD',
-        senderId: 'user5',
-        senderName: 'David Wilson',
-        participants: [
-          Participant(
-            id: 'user1',
-            name: 'Alex Johnson',
-            email: 'alex@example.com',
-            amountOwed: 25.0,
-            amountPaid: 25.0,
-            status: 'paid',
-          ),
-          Participant(
-            id: 'user3',
-            name: 'Mike Chen',
-            email: 'mike@example.com',
-            amountOwed: 25.0,
-            amountPaid: 25.0,
-            status: 'paid',
-          ),
-          Participant(
-            id: 'user6',
-            name: 'Emma Davis',
-            email: 'emma@example.com',
-            amountOwed: 25.0,
-            amountPaid: 25.0,
-            status: 'paid',
-          ),
-        ],
-        description: 'Movie tickets',
-        date: DateTime.now().subtract(const Duration(days: 5)),
-        status: 'completed',
-      ),
-    ];
+    final List<Map<String, dynamic>> maps =
+        await _dbHelper.queryAllSocialPayments();
+    return List.generate(maps.length, (i) {
+      return SocialPayment.fromDbMap(maps[i]);
+    });
+    // TODO: Add initial data seeding or API fetching if DB is empty
   }
 
-  // Simulate creating a new social payment
-  Future<SocialPayment> createSocialPayment(SocialPayment payment) async {
-    // This would normally be an API call to a backend service
-    await Future.delayed(
-      const Duration(milliseconds: 800),
-    ); // Simulate network delay
-
-    // Return the payment with a generated ID (in a real app, this would come from the backend)
-    return payment;
+  // Create a new social payment in the database
+  Future<int> createSocialPayment(SocialPayment payment) async {
+    return await _dbHelper.insertSocialPayment(payment.toDbMap());
   }
 
-  // Simulate updating a participant's payment status
-  Future<SocialPayment> updateParticipantStatus(
+  // Update a participant's payment status in the database
+  Future<int> updateParticipantStatus(
     String paymentId,
     String participantId,
     String status,
     double amountPaid,
   ) async {
-    // This would normally be an API call to a backend service
-    await Future.delayed(
-      const Duration(milliseconds: 800),
-    ); // Simulate network delay
+    // Fetch the existing payment
+    final List<Map<String, dynamic>> paymentMaps = await _dbHelper.database
+        .then(
+          (db) => db.query(
+            'social_payments',
+            where: 'id = ?',
+            whereArgs: [paymentId],
+          ),
+        );
 
-    // In a real app, we would update the payment in the database and return the updated payment
-    // For now, we'll just return a mock payment
-    return getSocialPayments().then((payments) => payments.first);
+    if (paymentMaps.isEmpty) {
+      throw Exception('Payment not found');
+    }
+
+    SocialPayment payment = SocialPayment.fromDbMap(paymentMaps.first);
+
+    // Find and update the participant
+    bool participantFound = false;
+    for (var participant in payment.participants) {
+      if (participant.id == participantId) {
+        // Create a new Participant object with updated values
+        final updatedParticipant = Participant(
+          id: participant.id,
+          name: participant.name,
+          email: participant.email,
+          amountOwed: participant.amountOwed,
+          amountPaid: amountPaid, // Update the amount paid
+          status: status, // Update the status
+        );
+        // Replace the old participant with the updated one
+        final index = payment.participants.indexOf(participant);
+        payment.participants[index] = updatedParticipant;
+        participantFound = true;
+        break;
+      }
+    }
+
+    if (!participantFound) {
+      throw Exception('Participant not found in payment');
+    }
+
+    // Update the payment in the database
+    return await _dbHelper.updateSocialPayment(payment.toDbMap());
   }
 
-  // Simulate sending a gift payment with a message
-  Future<SocialPayment> sendGiftPayment({
+  // Send a gift payment (create a new social payment)
+  Future<int> sendGiftPayment({
     required double amount,
     required String currency,
     required String recipientId,
@@ -152,6 +109,7 @@ class SocialPaymentService {
       imageUrl: imageUrl,
     );
 
-    return payment;
+    // Insert the payment into the database
+    return await _dbHelper.insertSocialPayment(payment.toDbMap());
   }
 }

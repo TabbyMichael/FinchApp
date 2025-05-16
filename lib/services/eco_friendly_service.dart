@@ -1,138 +1,68 @@
+import 'dart:convert';
+import '../database/database_helper.dart';
 import '../models/carbon_footprint.dart';
+import '../models/sustainable_investment.dart'; // Import the moved model
+import '../models/eco_donation.dart'; // Import the moved model
 import '../models/transaction.dart';
-import '../screens/eco_friendly_screen.dart';
+// Remove import for eco_friendly_screen.dart if EcoDonation was moved
+// import '../screens/eco_friendly_screen.dart';
 
 class EcoFriendlyService {
-  // Simulate fetching carbon footprint data for transactions
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+  // Fetch carbon footprint data from the database
   Future<List<CarbonFootprint>> getCarbonFootprint() async {
-    // This would normally be an API call to a backend service
-    await Future.delayed(
-      const Duration(milliseconds: 800),
-    ); // Simulate network delay
-
-    return [
-      CarbonFootprint(
-        id: 'cf1',
-        transactionId: 'tx1',
-        carbonAmount: 2.5,
-        category: 'Transportation',
-        date: DateTime.now().subtract(const Duration(days: 2)),
-        details: {'transportType': 'Taxi', 'distance': '5 miles'},
-      ),
-      CarbonFootprint(
-        id: 'cf2',
-        transactionId: 'tx2',
-        carbonAmount: 1.2,
-        category: 'Food',
-        date: DateTime.now().subtract(const Duration(days: 5)),
-        details: {'foodType': 'Restaurant', 'mealType': 'Dinner'},
-      ),
-      CarbonFootprint(
-        id: 'cf3',
-        transactionId: 'tx3',
-        carbonAmount: 0.8,
-        category: 'Shopping',
-        date: DateTime.now().subtract(const Duration(hours: 12)),
-        details: {'storeType': 'Clothing', 'items': 'Apparel'},
-      ),
-    ];
+    final List<Map<String, dynamic>> maps =
+        await _dbHelper.queryAllCarbonFootprints();
+    // Convert the List<Map<String, dynamic> into a List<CarbonFootprint>.
+    return List.generate(maps.length, (i) {
+      return CarbonFootprint.fromDbMap(maps[i]);
+    });
+    // TODO: Add initial data seeding or API fetching if DB is empty
   }
 
-  // Simulate fetching sustainable investment options
-  Future<List<SustainableInvestment>> getSustainableInvestments() async {
-    // This would normally be an API call to a backend service
-    await Future.delayed(
-      const Duration(milliseconds: 800),
-    ); // Simulate network delay
+  // Add a new carbon footprint record
+  Future<void> addCarbonFootprint(CarbonFootprint footprint) async {
+    await _dbHelper.insertCarbonFootprint(footprint.toDbMap());
+  }
 
-    return [
-      SustainableInvestment(
-        id: 'si1',
-        name: 'Green Energy Fund',
-        description: 'Invests in renewable energy companies and projects',
-        returnRate: 5.2,
-        riskLevel: 'medium',
-        minInvestment: 100.0,
-        currency: 'USD',
-        sustainabilityCategories: ['Renewable Energy', 'Clean Tech'],
-        impactScore: 8.5,
-      ),
-      SustainableInvestment(
-        id: 'si2',
-        name: 'Sustainable Water Portfolio',
-        description:
-            'Focuses on water conservation and clean water technologies',
-        returnRate: 4.8,
-        riskLevel: 'low',
-        minInvestment: 50.0,
-        currency: 'USD',
-        sustainabilityCategories: ['Water Conservation', 'Clean Water'],
-        impactScore: 7.9,
-      ),
-      SustainableInvestment(
-        id: 'si3',
-        name: 'Eco-Innovation Fund',
-        description: 'Invests in startups developing sustainable solutions',
-        returnRate: 7.5,
-        riskLevel: 'high',
-        minInvestment: 250.0,
-        currency: 'USD',
-        sustainabilityCategories: [
-          'Innovation',
-          'Circular Economy',
-          'Sustainable Materials',
-        ],
-        impactScore: 9.2,
-      ),
-    ];
+  // Fetch sustainable investment options from the database
+  Future<List<SustainableInvestment>> getSustainableInvestments() async {
+    final List<Map<String, dynamic>> maps =
+        await _dbHelper.queryAllSustainableInvestments();
+    return maps.map((map) => SustainableInvestment.fromDbMap(map)).toList();
+  }
+
+  // Add a new sustainable investment record
+  Future<void> addSustainableInvestment(
+    SustainableInvestment investment,
+  ) async {
+    await _dbHelper.insertSustainableInvestment(investment.toDbMap());
   }
 
   // Simulate making a donation to environmental causes
-  Future<bool> makeDonation({
-    required String cause,
-    required double amount,
-    required String currency,
-  }) async {
-    // This would normally be an API call to a backend service
-    await Future.delayed(
-      const Duration(milliseconds: 800),
-    ); // Simulate network delay
-
-    // In a real app, we would process the donation and return success/failure
-    return true;
+  Future<bool> makeDonation(EcoDonation donation) async {
+    try {
+      await _dbHelper.insertEcoDonation(donation.toDbMap());
+      return true;
+    } catch (e) {
+      print('Donation failed: \$e');
+      return false;
+    }
   }
 
-  // Get eco-friendly donation options
+  // Get eco-friendly donation options from the database
   Future<List<EcoDonation>> getEcoDonations() async {
-    // This would normally be an API call to a backend service
-    await Future.delayed(
-      const Duration(milliseconds: 800),
-    ); // Simulate network delay
+    final List<Map<String, dynamic>> maps =
+        await _dbHelper.queryAllEcoDonations();
+    return List.generate(maps.length, (i) {
+      return EcoDonation.fromDbMap(maps[i]);
+    });
+    // TODO: Add initial data seeding or API fetching if DB is empty
+  }
 
-    return [
-      EcoDonation(
-        id: 'ed1',
-        name: 'Ocean Cleanup Foundation',
-        category: 'Ocean Conservation',
-        description:
-            'Developing advanced technologies to rid the world\'s oceans of plastic.',
-      ),
-      EcoDonation(
-        id: 'ed2',
-        name: 'Rainforest Trust',
-        category: 'Forest Conservation',
-        description:
-            'Protecting threatened tropical forests and endangered wildlife.',
-      ),
-      EcoDonation(
-        id: 'ed3',
-        name: 'Climate Action Network',
-        category: 'Climate Change',
-        description:
-            'Working to promote government and individual action to limit human-induced climate change.',
-      ),
-    ];
-    // For now, we'll just return success
+  // Add a new eco donation record
+  Future<void> addEcoDonation(EcoDonation donation) async {
+    await _dbHelper.insertEcoDonation(donation.toDbMap());
   }
 
   // Simulate calculating carbon offset for a transaction
